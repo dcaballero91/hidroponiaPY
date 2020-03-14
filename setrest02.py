@@ -14,7 +14,8 @@ Objetivo   : se encarga de tomcar temperatura y humedad ambiente
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/setrest02
+http://192.168.137.220/scrapgin/setrest02 por apache
+http://192.168.137.220:5000/setrest02 por flask
 {
 	"mod":"DHT11",
     "ubi":"entrada"
@@ -28,6 +29,8 @@ import os, signal
 from time import sleep
 import pandas as pd
 from unipath import Path
+"""python -m pip install mysql-connector"""
+import mysql.connector
  
 setrest02 = Blueprint('setrest02', __name__)
 
@@ -56,12 +59,28 @@ def accesoSet(fullpath,mod,ubi):
     global menRes,codRes
     f = Path(fullpath)
     f.exists()
-
+    db=mysql.connector.connect(host='localhost',user='root',passwd='tecnologia',database='hidroponia')
     try:
         print(fullpath)
         print('seleccion de opcion')
-        if ubi == "entrada":
-                print ("opcion entrada")
+        if ubi == "interior":
+                print ("opcion interior")
+                cursor=db.cursor() 
+                sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
+                nombre=(mod,ubi)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                z=int(y)
+                print(z)
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                val=("1","2",z)
+                cursor.execute(sql,val)
+                db.commit()
+                db.close()
+                print(cursor.rowcount,"insertado correctamente")
         elif ubi == "semillero":
                 print ("opcion semillero")
                 
