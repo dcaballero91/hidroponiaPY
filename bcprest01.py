@@ -98,10 +98,10 @@ def loginSitioBCP(fullpath):
         print(fullpath)
         # type text
         usuario = driver.find_element_by_id('P101_USERNAME')
-        usuario.send_keys('e1039cvarela')
+        usuario.send_keys('xxxx')
 
         contrasenha = driver.find_element_by_id('P101_PASSWORD')
-        contrasenha.send_keys('ruizurss2020.T')
+        contrasenha.send_keys('xxx')
 
         # click submit button
         LOGIN_button = driver.find_element_by_id('P101_LOGIN')
