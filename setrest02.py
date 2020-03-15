@@ -18,17 +18,13 @@ http://192.168.137.220/scrapgin/setrest02 por apache
 http://192.168.137.220:5000/setrest02 por flask
 {
 	"mod":"DHT11",
-    "ubi":"entrada"
+    "ubi":"north"
 }
 """
 from flask import Blueprint, request, jsonify
-from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import Select
-import os, signal
-from time import sleep
-import pandas as pd
+import os
 from unipath import Path
+import Adafruit_DHT as dht
 """python -m pip install mysql-connector"""
 import mysql.connector
  
@@ -59,12 +55,23 @@ def accesoSet(fullpath,mod,ubi):
     global menRes,codRes
     f = Path(fullpath)
     f.exists()
+    # Configuracion del tipo de sensor DHT
+    sensor = dht.DHT22
+
+    # Configuracion del puerto GPIO al cual esta conectado  (GPIO 23)
+    north = 4
+    south = 6 
+    east = 7
+    west = 8
     db=mysql.connector.connect(host='localhost',user='root',passwd='tecnologia',database='hidroponia')
     try:
         print(fullpath)
         print('seleccion de opcion')
-        if ubi == "interior":
-                print ("opcion interior")
+        
+		
+        if ubi == "north":
+                print ("opcion north")
+                #humidity, temperature = dht.read_retry(sensor, north)
                 cursor=db.cursor() 
                 sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
                 nombre=(mod,ubi)
@@ -76,13 +83,69 @@ def accesoSet(fullpath,mod,ubi):
                 z=int(y)
                 print(z)
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
-                val=("1","2",z)
+                #val=(temperature,humidity,z)
+                val=('30','30',z)
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
                 print(cursor.rowcount,"insertado correctamente")
-        elif ubi == "semillero":
-                print ("opcion semillero")
+        elif ubi == "south":
+                print ("opcion south")
+                #humidity, temperature = dht.read_retry(sensor, south)
+                cursor=db.cursor() 
+                sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
+                nombre=(mod,ubi)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                z=int(y)
+                print(z)
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                #val=(temperature,humidity,z)
+                val=('31','41',z)
+                cursor.execute(sql,val)
+                db.commit()
+                db.close()
+        elif ubi == "east":
+                print ("opcion east")
+                #umidity, temperature = dht.read_retry(sensor, east)
+                cursor=db.cursor() 
+                sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
+                nombre=(mod,ubi)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                z=int(y)
+                print(z)
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                #val=(temperature,humidity,z)
+                val=('32','42',z)
+                cursor.execute(sql,val)
+                db.commit()
+                db.close()
+        elif ubi == "west":
+                print ("opcion west")
+                #umidity, temperature = dht.read_retry(sensor, west)
+                cursor=db.cursor() 
+                sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
+                nombre=(mod,ubi)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                z=int(y)
+                print(z)
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                #val=(temperature,humidity,z)
+                val=('33','43',z)
+                cursor.execute(sql,val)
+                db.commit()
+                db.close()
                 
         
              
