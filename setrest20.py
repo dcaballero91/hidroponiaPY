@@ -21,6 +21,12 @@ http://192.168.137.220:5000/setrest20 por flask
 {
 	"mod":"DHT11"
 }
+
+Respeusta de servicio:
+    {"ParmOut": {
+   "hum": 39,
+   "temp": 31.5
+}}
 """
 from flask import Blueprint, request, jsonify
 import os
