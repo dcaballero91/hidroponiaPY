@@ -4,9 +4,8 @@
 from flask import Flask, jsonify, request
 from setrest01 import setrest01
 from setrest02 import setrest02
-from bcprest01 import bcprest01
-from bcprest02 import bcprest02
 from setrest20 import setrest20
+from setrest21 import setrest21
 from setrest03 import setrest03
 from setrest04 import setrest04
 from setrest05 import setrest05
@@ -15,9 +14,8 @@ app = Flask(__name__)
 ##servicios rest
 app.register_blueprint(setrest01)
 app.register_blueprint(setrest02)
-app.register_blueprint(bcprest01)
-app.register_blueprint(bcprest02)
 app.register_blueprint(setrest20)
+app.register_blueprint(setrest21)
 app.register_blueprint(setrest03)
 app.register_blueprint(setrest04)
 app.register_blueprint(setrest05)
