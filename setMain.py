@@ -8,6 +8,8 @@ from bcprest01 import bcprest01
 from bcprest02 import bcprest02
 from setrest20 import setrest20
 from setrest03 import setrest03
+from setrest04 import setrest04
+from setrest05 import setrest05
 app = Flask(__name__) 
 
 ##servicios rest
@@ -17,6 +19,8 @@ app.register_blueprint(bcprest01)
 app.register_blueprint(bcprest02)
 app.register_blueprint(setrest20)
 app.register_blueprint(setrest03)
+app.register_blueprint(setrest04)
+app.register_blueprint(setrest05)
 @app.route('/', methods=['GET'])
 def hello():
     return 'Hello World!'

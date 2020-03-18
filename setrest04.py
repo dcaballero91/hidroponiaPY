@@ -1,25 +1,26 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Mar 16 22:52:11 2020
+Created on Tue Mar 17 08:55:12 2020
+
+@author: dcaballe
 Modulos    : Rele
 Sub-Modulos: Rele
 Empresa    : UNIDA PY
 
 Autor      : Derlis Caballero
-Fecha      : 12/03/2020
+Fecha      : 17/03/2020
 
 Nombre     : Rele
-Objetivo   : modoulo para activar reles
+Objetivo   : modoulo para desactivar el rele
 
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/setrest03 por apache
-http://192.168.137.220:5000/setrest03 por flask
+http://192.168.137.220/scrapgin/setrest04 por apache
+http://192.168.137.220:5000/setrest04 por flask
 {
 	"mod":"fan",
-    "est":"act"
+    "est":"des"
 }
 """
 from flask import Blueprint, request, jsonify
@@ -29,9 +30,9 @@ from unipath import Path
 import mysql.connector
 
  
-setrest03 = Blueprint('setrest03', __name__)
+setrest04 = Blueprint('setrest04', __name__)
 
-@setrest03.route('/setrest03', methods=['POST'])
+@setrest04.route('/setrest04', methods=['POST'])
 def llamarServicioSet():
     global mod, est
     ##try:
@@ -49,7 +50,7 @@ def inicializarVariables(mod,est):
     mainpath="/var/www/html/scraping/"
     fullpath= os.path.join(mainpath)
     accesoSet(fullpath,mod,est)
-def accesoSet(fullpath,mod,est):
+def accesoSet(fullpath,mod,ubi):
     global menRes,codRes
     f = Path(fullpath)
     f.exists()
@@ -88,14 +89,13 @@ def accesoSet(fullpath,mod,est):
             cursor.execute(sql,nombre)
             db.commit()
             print(cursor.rowcount, "record(s) affected")
-            #Exportamos el PIN deseado
-            os.system ('sudo echo %s > /sys/class/gpio/export'%pin_fan)
+            #Apagamos la salida del rele
             mainpath="/sys/class/gpio/"
             fullpath= os.path.join(mainpath,"gpio"+pin_fan)
             #Establecemos la direccion (salida o entrada)
-            os.system('sudo echo out > %s/direction'%fullpath)
-            #Activamos la salida del rele dandole un valor de 1 al bit
-            os.system('sudo echo 1 > %s/value'%fullpath)
+            os.system('sudo echo 0 > %s/value'%fullpath)
+            #Liberamos el pin activasdo
+            os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
         elif mod == "light":
             print ("opcion light")
             cursor=db.cursor() 
@@ -127,14 +127,13 @@ def accesoSet(fullpath,mod,est):
             cursor.execute(sql,nombre)
             db.commit()
             print(cursor.rowcount, "record(s) affected")
-            #Exportamos el PIN deseado
-            os.system ('sudo echo %s > /sys/class/gpio/export'%pin_fan)
+            #Apagamos la salida del rele
             mainpath="/sys/class/gpio/"
             fullpath= os.path.join(mainpath,"gpio"+pin_fan)
             #Establecemos la direccion (salida o entrada)
-            os.system('sudo echo out > %s/direction'%fullpath)
-            #Activamos la salida del rele dandole un valor de 1 al bit
-            os.system('sudo echo 1 > %s/value'%fullpath)
+            os.system('sudo echo 0 > %s/value'%fullpath)
+            #Liberamos el pin activasdo
+            os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
         elif mod == "motor":
             print ("opcion motor")
             cursor=db.cursor() 
@@ -166,14 +165,13 @@ def accesoSet(fullpath,mod,est):
             cursor.execute(sql,nombre)
             db.commit()
             print(cursor.rowcount, "record(s) affected")
-            #Exportamos el PIN deseado
-            os.system ('sudo echo %s > /sys/class/gpio/export'%pin_fan)
+            #Apagamos la salida del rele
             mainpath="/sys/class/gpio/"
             fullpath= os.path.join(mainpath,"gpio"+pin_fan)
             #Establecemos la direccion (salida o entrada)
-            os.system('sudo echo out > %s/direction'%fullpath)
-            #Activamos la salida del rele dandole un valor de 1 al bit
-            os.system('sudo echo 1 > %s/value'%fullpath)
+            os.system('sudo echo 0 > %s/value'%fullpath)
+            #Liberamos el pin activasdo
+            os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
         elif mod == "sprintkler":
             print ("opcion sprintkler")
             cursor=db.cursor() 
@@ -205,15 +203,14 @@ def accesoSet(fullpath,mod,est):
             cursor.execute(sql,nombre)
             db.commit()
             print(cursor.rowcount, "record(s) affected")
-            #Exportamos el PIN deseado
-            os.system ('sudo echo %s > /sys/class/gpio/export'%pin_fan)
+            #Apagamos la salida del rele
             mainpath="/sys/class/gpio/"
             fullpath= os.path.join(mainpath,"gpio"+pin_fan)
             #Establecemos la direccion (salida o entrada)
-            os.system('sudo echo out > %s/direction'%fullpath)
-            #Activamos la salida del rele dandole un valor de 1 al bit
-            os.system('sudo echo 1 > %s/value'%fullpath)
+            os.system('sudo echo 0 > %s/value'%fullpath)
+            #Liberamos el pin activasdo
+            os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
     except Exception as e:
-        print("ERROR EN: login, intento driver.close() - driver.quit",str(e))
+        print("ERROR EN:",str(e))
         codRes= 'ERROR'
         menRes = str(e)
