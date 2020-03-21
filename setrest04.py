@@ -54,7 +54,7 @@ def accesoSet(fullpath,mod,ubi):
     global menRes,codRes
     f = Path(fullpath)
     f.exists()
-    db=mysql.connector.connect(host='localhost',user='root',passwd='tecnologia',database='hidroponia')
+    db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
     try:
         print(fullpath)
         print('seleccion de opcion')

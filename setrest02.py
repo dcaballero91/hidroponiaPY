@@ -63,7 +63,7 @@ def accesoSet(fullpath,mod,ubi):
     south = 6 
     east = 7
     west = 8
-    db=mysql.connector.connect(host='localhost',user='root',passwd='tecnologia',database='hidroponia')
+    db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
     try:
         print(fullpath)
         print('seleccion de opcion')
