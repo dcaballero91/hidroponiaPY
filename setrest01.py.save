@@ -22,7 +22,12 @@ http://192.168.137.220:500/setrest01 por flask
 }
 """
 from flask import Blueprint, request, jsonify
-import os
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+import os, signal
+from time import sleep
+import pandas as pd
 from unipath import Path
 """python -m pip install mysql-connector"""
 import mysql.connector
@@ -55,8 +60,8 @@ def accesoSet(fullpath,mod,ubi):
     global menRes,codRes
     f = Path(fullpath)
     f.exists()
-    db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
-    db2=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306')
+    db=mysql.connector.connect(host='localhost',user='root',passwd='.
+',database='hidroponia')
     try:
         print(fullpath)
         print('seleccion de opcion')
@@ -77,14 +82,7 @@ def accesoSet(fullpath,mod,ubi):
             cursor.execute(sql,val)
             db.commit()
             db.close()
-            print(cursor.rowcount,"insertado correctamente local")
-            cursor=db2.cursor() 
-            sql="insert into DS18B20 (temperatura,id_sensor) values(%s,%s)"
-            val=("1",z)
-            cursor.execute(sql,val)
-            db2.commit()
-            db2.close()
-            print(cursor.rowcount,"insertado correctamente para la web")
+            print(cursor.rowcount,"insertado correctamente")
             
         elif ubi == "semillero":
                 print ("opcion semillero")

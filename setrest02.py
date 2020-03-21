@@ -64,6 +64,7 @@ def accesoSet(fullpath,mod,ubi):
     east = 7
     west = 8
     db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
+    db2=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306')
     try:
         print(fullpath)
         print('seleccion de opcion')
@@ -82,13 +83,23 @@ def accesoSet(fullpath,mod,ubi):
                 y = ''.join(map(str,x))
                 z=int(y)
                 print(z)
+                #Base de datos local
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
                 #val=(temperature,humidity,z)
                 val=('30','30',z)
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
-                print(cursor.rowcount,"insertado correctamente")
+                print(cursor.rowcount,"insertado correctamente local")
+                #Base de datos Wweb
+                cursor=db2.cursor() 
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                #val=(temperature,humidity,z)
+                val=('30','30',z)
+                cursor.execute(sql,val)
+                db2.commit()
+                db2.close()
+                print(cursor.rowcount,"insertado correctamente WEB")
         elif ubi == "south":
                 print ("opcion south")
                 #humidity, temperature = dht.read_retry(sensor, south)
@@ -108,6 +119,16 @@ def accesoSet(fullpath,mod,ubi):
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
+                print(cursor.rowcount,"insertado correctamente local")
+                #Base de datos Wweb
+                cursor=db2.cursor() 
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                #val=(temperature,humidity,z)
+                val=('30','30',z)
+                cursor.execute(sql,val)
+                db2.commit()
+                db2.close()
+                print(cursor.rowcount,"insertado correctamente WEB")
         elif ubi == "east":
                 print ("opcion east")
                 #umidity, temperature = dht.read_retry(sensor, east)
@@ -127,6 +148,16 @@ def accesoSet(fullpath,mod,ubi):
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
+                print(cursor.rowcount,"insertado correctamente local")
+                #Base de datos Wweb
+                cursor=db2.cursor() 
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                #val=(temperature,humidity,z)
+                val=('30','30',z)
+                cursor.execute(sql,val)
+                db2.commit()
+                db2.close()
+                print(cursor.rowcount,"insertado correctamente WEB")
         elif ubi == "west":
                 print ("opcion west")
                 #umidity, temperature = dht.read_retry(sensor, west)
@@ -146,7 +177,16 @@ def accesoSet(fullpath,mod,ubi):
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
-                
+                print(cursor.rowcount,"insertado correctamente local")
+                #Base de datos Wweb
+                cursor=db2.cursor() 
+                sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                #val=(temperature,humidity,z)
+                val=('30','30',z)
+                cursor.execute(sql,val)
+                db2.commit()
+                db2.close()
+                print(cursor.rowcount,"insertado correctamente WEB")
         
              
     except Exception as e:
