@@ -100,11 +100,7 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =='D':
-                codRes= 'ERROR'
-                menRes = "DISABLE"
-                
-            else:
+            if estado == 'P' or estado=='D':
                 cursor=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
                 nombre=(est,id_sensor)
@@ -119,6 +115,12 @@ def accesoSet(fullpath,mod,ubi):
                 os.system('sudo echo 0 > %s/value'%fullpath)
                 #Liberamos el pin activasdo
                 os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+            elif estado =='A':
+                codRes= 'ERROR'
+                menRes = "ACTVIE"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
                 
         elif mod == "light":
             print ("opcion light")
@@ -157,11 +159,7 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =='D':
-                codRes= 'ERROR'
-                menRes = "DISABLE"
-                
-            else:
+            if estado == 'P' or estado=='D':
                 cursor=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
                 nombre=(est,id_sensor)
@@ -176,6 +174,12 @@ def accesoSet(fullpath,mod,ubi):
                 os.system('sudo echo 0 > %s/value'%fullpath)
                 #Liberamos el pin activasdo
                 os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+            elif estado =='A':
+                codRes= 'ERROR'
+                menRes = "ACTVIE"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
         elif mod == "motor":
             print ("opcion motor")
             cursor=db.cursor() 
@@ -212,11 +216,7 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =='D':
-                codRes= 'ERROR'
-                menRes = "DISABLE"
-                
-            else:
+            if estado == 'P' or estado=='D':
                 cursor=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
                 nombre=(est,id_sensor)
@@ -231,6 +231,12 @@ def accesoSet(fullpath,mod,ubi):
                 os.system('sudo echo 0 > %s/value'%fullpath)
                 #Liberamos el pin activasdo
                 os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+            elif estado =='A':
+                codRes= 'ERROR'
+                menRes = "ACTVIE"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
         elif mod == "sprintkler":
             print ("opcion sprintkler")
             cursor=db.cursor() 
@@ -267,11 +273,7 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =='D':
-                codRes= 'ERROR'
-                menRes = "DISABLE"
-                
-            else:
+            if estado == 'P' or estado=='D':
                 cursor=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
                 nombre=(est,id_sensor)
@@ -286,6 +288,12 @@ def accesoSet(fullpath,mod,ubi):
                 os.system('sudo echo 0 > %s/value'%fullpath)
                 #Liberamos el pin activasdo
                 os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+            elif estado =='A':
+                codRes= 'ERROR'
+                menRes = "ACTVIE"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
     except Exception as e:
         print("ERROR EN:",str(e))
         codRes= 'ERROR'

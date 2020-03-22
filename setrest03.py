@@ -88,20 +88,25 @@ def accesoSet(fullpath,mod,est):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado == "D":
-                cursor=db.cursor() 
-                sql="update Rele set estado=%s where id_sensor=%s"
-                nombre=(est,id_sensor)
-                cursor.execute(sql,nombre)
-                db.commit()
-                print(cursor.rowcount, "record(s) affected")
+            if est == 'D' or est == 'A':
                 
-            elif estado == "A":
-                codRes= 'ERROR'
-                menRes = "ACTIVO"
-            elif estado == "P":
-                codRes= 'ERROR'
-                menRes = "PROCESO"
+                    cursor=db.cursor() 
+                    sql="update Rele set estado=%s where id_sensor=%s"
+                    nombre=(est,id_sensor)
+                    cursor.execute(sql,nombre)
+                    db.commit()
+                    print(cursor.rowcount, "record(s) affected")
+                
+            else:
+                    codRes= 'ERROR'
+                    menRes = "ESTADO INVALIDO"
+                    
+                
+                
+                
+            
+            
+                
                 
         elif mod == "light":
             print ("opcion light")
@@ -128,20 +133,18 @@ def accesoSet(fullpath,mod,est):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado == "D":
-                cursor=db.cursor() 
-                sql="update Rele set estado=%s where id_sensor=%s"
-                nombre=(est,id_sensor)
-                cursor.execute(sql,nombre)
-                db.commit()
-                print(cursor.rowcount, "record(s) affected")
+            if est == 'D' or est == 'A':
                 
-            elif estado == "A":
-                codRes= 'ERROR'
-                menRes = "ACTIVO"
-            elif estado == "P":
-                codRes= 'ERROR'
-                menRes = "PROCESO"
+                    cursor=db.cursor() 
+                    sql="update Rele set estado=%s where id_sensor=%s"
+                    nombre=(est,id_sensor)
+                    cursor.execute(sql,nombre)
+                    db.commit()
+                    print(cursor.rowcount, "record(s) affected")
+                
+            else:
+                    codRes= 'ERROR'
+                    menRes = "ESTADO INVALIDO"
             
         elif mod == "motor":
             print ("opcion motor")
@@ -168,20 +171,18 @@ def accesoSet(fullpath,mod,est):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado == "D":
-                cursor=db.cursor() 
-                sql="update Rele set estado=%s where id_sensor=%s"
-                nombre=(est,id_sensor)
-                cursor.execute(sql,nombre)
-                db.commit()
-                print(cursor.rowcount, "record(s) affected")
+            if est == 'D' or est == 'A':
                 
-            elif estado == "A":
-                codRes= 'ERROR'
-                menRes = "ACTIVO"
-            elif estado == "P":
-                codRes= 'ERROR'
-                menRes = "PROCESO"
+                    cursor=db.cursor() 
+                    sql="update Rele set estado=%s where id_sensor=%s"
+                    nombre=(est,id_sensor)
+                    cursor.execute(sql,nombre)
+                    db.commit()
+                    print(cursor.rowcount, "record(s) affected")
+                
+            else:
+                    codRes= 'ERROR'
+                    menRes = "ESTADO INVALIDO"
         elif mod == "sprintkler":
             print ("opcion sprintkler")
             cursor=db.cursor() 
@@ -207,20 +208,18 @@ def accesoSet(fullpath,mod,est):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado == "D":
-                cursor=db.cursor() 
-                sql="update Rele set estado=%s where id_sensor=%s"
-                nombre=(est,id_sensor)
-                cursor.execute(sql,nombre)
-                db.commit()
-                print(cursor.rowcount, "record(s) affected")
+            if est == 'D' or est == 'A':
                 
-            elif estado == "A":
-                codRes= 'ERROR'
-                menRes = "ACTIVO"
-            elif estado == "P":
-                codRes= 'ERROR'
-                menRes = "PROCESO"
+                    cursor=db.cursor() 
+                    sql="update Rele set estado=%s where id_sensor=%s"
+                    nombre=(est,id_sensor)
+                    cursor.execute(sql,nombre)
+                    db.commit()
+                    print(cursor.rowcount, "record(s) affected")
+                
+            else:
+                    codRes= 'ERROR'
+                    menRes = "ESTADO INVALIDO"
     except Exception as e:
         print("ERROR EN: login, intento driver.close() - driver.quit",str(e))
         codRes= 'ERROR'

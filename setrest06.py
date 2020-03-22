@@ -103,7 +103,7 @@ def accesoSet(fullpath,mod,est):
                 codRes= 'ERROR'
                 menRes = "PROCESO"
                 
-            else:
+            elif estado == "A":
                 #Actualizamos estado
                 cursorUpdate=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
@@ -120,6 +120,12 @@ def accesoSet(fullpath,mod,est):
                 os.system('sudo echo out > %s/direction'%fullpath)
                 #Activamos la salida del rele dandole un valor de 1 al bit
                 os.system('sudo echo 1 > %s/value'%fullpath)
+            elif estado == "D":
+                codRes= 'ERROR'
+                menRes = "DESACT OF MARKET FOR DESACT"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
         elif mod == "light":
             print ("opcion light")
             cursor=db.cursor() 
@@ -160,7 +166,7 @@ def accesoSet(fullpath,mod,est):
                 codRes= 'ERROR'
                 menRes = "PROCESO"
                 
-            else:
+            elif estado == "A":
                 #Actualizamos estado
                 cursorUpdate=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
@@ -177,6 +183,12 @@ def accesoSet(fullpath,mod,est):
                 os.system('sudo echo out > %s/direction'%fullpath)
                 #Activamos la salida del rele dandole un valor de 1 al bit
                 os.system('sudo echo 1 > %s/value'%fullpath)
+            elif estado == "D":
+                codRes= 'ERROR'
+                menRes = "DESACT OF MARKET FOR DESACT"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
         elif mod == "motor":
             print ("opcion motor")
             cursor=db.cursor() 
@@ -217,7 +229,7 @@ def accesoSet(fullpath,mod,est):
                 codRes= 'ERROR'
                 menRes = "PROCESO"
                 
-            else:
+            elif estado == "A":
                 #Actualizamos estado
                 cursorUpdate=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
@@ -234,6 +246,12 @@ def accesoSet(fullpath,mod,est):
                 os.system('sudo echo out > %s/direction'%fullpath)
                 #Activamos la salida del rele dandole un valor de 1 al bit
                 os.system('sudo echo 1 > %s/value'%fullpath)
+            elif estado == "D":
+                codRes= 'ERROR'
+                menRes = "DESACT OF MARKET FOR DESACT"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
         elif mod == "sprintkler":
             print ("opcion sprintkler")
             cursor=db.cursor() 
@@ -269,12 +287,11 @@ def accesoSet(fullpath,mod,est):
             y = ''.join(map(str,x))
             estado=(y)
             print("Estado:",estado)
-            db.commit()
             if estado =="P":
                 codRes= 'ERROR'
                 menRes = "PROCESO"
                 
-            else:
+            elif estado == "A":
                 #Actualizamos estado
                 cursorUpdate=db.cursor() 
                 sql="update Rele set estado=%s where id_sensor=%s"
@@ -291,6 +308,12 @@ def accesoSet(fullpath,mod,est):
                 os.system('sudo echo out > %s/direction'%fullpath)
                 #Activamos la salida del rele dandole un valor de 1 al bit
                 os.system('sudo echo 1 > %s/value'%fullpath)
+            elif estado == "D":
+                codRes= 'ERROR'
+                menRes = "DESACT OF MARKET FOR DESACT"
+            else:
+                codRes= 'ERROR'
+                menRes = "ESTADO INVALIDO"
     except Exception as e:
         print("ERROR EN: login, intento driver.close() - driver.quit",str(e))
         codRes= 'ERROR'
