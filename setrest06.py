@@ -1,26 +1,25 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 17 08:55:12 2020
-
-@author: dcaballe
+Created on Mon Mar 16 22:52:11 2020
 Modulos    : Rele
 Sub-Modulos: Rele
 Empresa    : UNIDA PY
 
 Autor      : Derlis Caballero
-Fecha      : 17/03/2020
+Fecha      : 12/03/2020
 
 Nombre     : Rele
-Objetivo   : modoulo para desactivar el rele
+Objetivo   : modoulo para activar reles
 
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/setrest04 por apache
-http://192.168.137.220:5000/setrest04 por flask
+http://192.168.137.220/scrapgin/setrest06 por apache
+http://192.168.137.220:5000/setrest06 por flask
 {
 	"mod":"fan",
-    "est":"D"
+    "est":"A"
 }
 """
 from flask import Blueprint, request, jsonify
@@ -30,9 +29,9 @@ from unipath import Path
 import mysql.connector
 
  
-setrest04 = Blueprint('setrest04', __name__)
+setrest06 = Blueprint('setrest06', __name__)
 
-@setrest04.route('/setrest04', methods=['POST'])
+@setrest06.route('/setrest06', methods=['POST'])
 def llamarServicioSet():
     global mod, est
     ##try:
@@ -50,7 +49,7 @@ def inicializarVariables(mod,est):
     mainpath="/var/www/html/scraping/"
     fullpath= os.path.join(mainpath)
     accesoSet(fullpath,mod,est)
-def accesoSet(fullpath,mod,ubi):
+def accesoSet(fullpath,mod,est):
     global menRes,codRes
     f = Path(fullpath)
     f.exists()
@@ -77,7 +76,7 @@ def accesoSet(fullpath,mod,ubi):
             y = ''.join(map(str,x))
             pin_fan=(y)
             db.commit()
-            print(pin_fan)
+            print("pin fan:",pin_fan)
             #Se obtiene id sensor
             sql="select id_sensor from sensor where descrip=%s"
             nombre=(mod,)
@@ -86,15 +85,9 @@ def accesoSet(fullpath,mod,ubi):
             #Se convierte a string el resultado del select para poder insertar 
             x=(result[0])
             y = ''.join(map(str,x))
-            id_sensor=(y)
+            id_sensor=int(y)
             db.commit()
-            print(id_sensor)
-            cursor=db.cursor() 
-            sql="update Rele set estado=%s where id_sensor=%s"
-            nombre=(est,id_sensor)
-            cursor.execute(sql,nombre)
-            db.commit()
-            print(cursor.rowcount, "record(s) affected")
+            print("id sensor",id_sensor)
             #Encontrar estado
             sql="select estado from Rele where id_sensor=%s"
             nombre=(id_sensor,)
@@ -106,18 +99,27 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =="D":
+            if estado =="P":
                 codRes= 'ERROR'
-                menRes = "DISABLE"
+                menRes = "PROCESO"
                 
             else:
-                #Apagamos la salida del rele
+                #Actualizamos estado
+                cursorUpdate=db.cursor() 
+                sql="update Rele set estado=%s where id_sensor=%s"
+                val=(est,id_sensor)
+                cursorUpdate.execute(sql,val)
+                db.commit()
+                db.close()
+                print(cursorUpdate.rowcount, "record(s) affected")
+                #Exportamos el PIN deseado
+                os.system ('sudo echo %s > /sys/class/gpio/export'%pin_fan)
                 mainpath="/sys/class/gpio/"
                 fullpath= os.path.join(mainpath,"gpio"+pin_fan)
                 #Establecemos la direccion (salida o entrada)
-                os.system('sudo echo 0 > %s/value'%fullpath)
-                #Liberamos el pin activasdo
-                os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+                os.system('sudo echo out > %s/direction'%fullpath)
+                #Activamos la salida del rele dandole un valor de 1 al bit
+                os.system('sudo echo 1 > %s/value'%fullpath)
         elif mod == "light":
             print ("opcion light")
             cursor=db.cursor() 
@@ -129,9 +131,9 @@ def accesoSet(fullpath,mod,ubi):
             #Se convierte a string el resultado del select para poder insertar 
             x=(result[0])
             y = ''.join(map(str,x))
-            pin_fan=(y)
+            pin_light=(y)
             db.commit()
-            print(pin_fan)
+            print("pin light:",pin_light)
             #Se obtiene id sensor
             sql="select id_sensor from sensor where descrip=%s"
             nombre=(mod,)
@@ -140,15 +142,9 @@ def accesoSet(fullpath,mod,ubi):
             #Se convierte a string el resultado del select para poder insertar 
             x=(result[0])
             y = ''.join(map(str,x))
-            id_sensor=(y)
+            id_sensor=int(y)
             db.commit()
-            print(id_sensor)
-            cursor=db.cursor() 
-            sql="update Rele set estado=%s where id_sensor=%s"
-            nombre=(est,id_sensor)
-            cursor.execute(sql,nombre)
-            db.commit()
-            print(cursor.rowcount, "record(s) affected")
+            print("id sensor",id_sensor)
             #Encontrar estado
             sql="select estado from Rele where id_sensor=%s"
             nombre=(id_sensor,)
@@ -160,18 +156,27 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =="D":
+            if estado =="P":
                 codRes= 'ERROR'
-                menRes = "DISABLE"
+                menRes = "PROCESO"
                 
             else:
-                #Apagamos la salida del rele
+                #Actualizamos estado
+                cursorUpdate=db.cursor() 
+                sql="update Rele set estado=%s where id_sensor=%s"
+                val=(est,id_sensor)
+                cursorUpdate.execute(sql,val)
+                db.commit()
+                db.close()
+                print(cursorUpdate.rowcount, "record(s) affected")
+                #Exportamos el PIN deseado
+                os.system ('sudo echo %s > /sys/class/gpio/export'%pin_light)
                 mainpath="/sys/class/gpio/"
-                fullpath= os.path.join(mainpath,"gpio"+pin_fan)
+                fullpath= os.path.join(mainpath,"gpio"+pin_light)
                 #Establecemos la direccion (salida o entrada)
-                os.system('sudo echo 0 > %s/value'%fullpath)
-                #Liberamos el pin activasdo
-            os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+                os.system('sudo echo out > %s/direction'%fullpath)
+                #Activamos la salida del rele dandole un valor de 1 al bit
+                os.system('sudo echo 1 > %s/value'%fullpath)
         elif mod == "motor":
             print ("opcion motor")
             cursor=db.cursor() 
@@ -183,9 +188,9 @@ def accesoSet(fullpath,mod,ubi):
             #Se convierte a string el resultado del select para poder insertar 
             x=(result[0])
             y = ''.join(map(str,x))
-            pin_fan=(y)
+            pin_motor=(y)
             db.commit()
-            print(pin_fan)
+            print("pin light:",pin_motor)
             #Se obtiene id sensor
             sql="select id_sensor from sensor where descrip=%s"
             nombre=(mod,)
@@ -194,15 +199,9 @@ def accesoSet(fullpath,mod,ubi):
             #Se convierte a string el resultado del select para poder insertar 
             x=(result[0])
             y = ''.join(map(str,x))
-            id_sensor=(y)
+            id_sensor=int(y)
             db.commit()
-            print(id_sensor)
-            cursor=db.cursor() 
-            sql="update Rele set estado=%s where id_sensor=%s"
-            nombre=(est,id_sensor)
-            cursor.execute(sql,nombre)
-            db.commit()
-            print(cursor.rowcount, "record(s) affected")
+            print("id sensor",id_sensor)
             #Encontrar estado
             sql="select estado from Rele where id_sensor=%s"
             nombre=(id_sensor,)
@@ -214,18 +213,27 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =="D":
+            if estado =="P":
                 codRes= 'ERROR'
-                menRes = "DISABLE"
+                menRes = "PROCESO"
                 
             else:
-                #Apagamos la salida del rele
+                #Actualizamos estado
+                cursorUpdate=db.cursor() 
+                sql="update Rele set estado=%s where id_sensor=%s"
+                val=(est,id_sensor)
+                cursorUpdate.execute(sql,val)
+                db.commit()
+                db.close()
+                print(cursorUpdate.rowcount, "record(s) affected")
+                #Exportamos el PIN deseado
+                os.system ('sudo echo %s > /sys/class/gpio/export'%pin_motor)
                 mainpath="/sys/class/gpio/"
-                fullpath= os.path.join(mainpath,"gpio"+pin_fan)
+                fullpath= os.path.join(mainpath,"gpio"+pin_motor)
                 #Establecemos la direccion (salida o entrada)
-                os.system('sudo echo 0 > %s/value'%fullpath)
-                #Liberamos el pin activasdo
-                os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+                os.system('sudo echo out > %s/direction'%fullpath)
+                #Activamos la salida del rele dandole un valor de 1 al bit
+                os.system('sudo echo 1 > %s/value'%fullpath)
         elif mod == "sprintkler":
             print ("opcion sprintkler")
             cursor=db.cursor() 
@@ -237,9 +245,9 @@ def accesoSet(fullpath,mod,ubi):
             #Se convierte a string el resultado del select para poder insertar 
             x=(result[0])
             y = ''.join(map(str,x))
-            pin_fan=(y)
+            pin_sprintkler=(y)
             db.commit()
-            print(pin_fan)
+            print("pin light:",pin_sprintkler)
             #Se obtiene id sensor
             sql="select id_sensor from sensor where descrip=%s"
             nombre=(mod,)
@@ -248,15 +256,9 @@ def accesoSet(fullpath,mod,ubi):
             #Se convierte a string el resultado del select para poder insertar 
             x=(result[0])
             y = ''.join(map(str,x))
-            id_sensor=(y)
+            id_sensor=int(y)
             db.commit()
-            print(id_sensor)
-            cursor=db.cursor() 
-            sql="update Rele set estado=%s where id_sensor=%s"
-            nombre=(est,id_sensor)
-            cursor.execute(sql,nombre)
-            db.commit()
-            print(cursor.rowcount, "record(s) affected")
+            print("id sensor",id_sensor)
             #Encontrar estado
             sql="select estado from Rele where id_sensor=%s"
             nombre=(id_sensor,)
@@ -268,19 +270,28 @@ def accesoSet(fullpath,mod,ubi):
             estado=(y)
             print("Estado:",estado)
             db.commit()
-            if estado =="D":
+            if estado =="P":
                 codRes= 'ERROR'
-                menRes = "DISABLE"
+                menRes = "PROCESO"
                 
             else:
-                #Apagamos la salida del rele
+                #Actualizamos estado
+                cursorUpdate=db.cursor() 
+                sql="update Rele set estado=%s where id_sensor=%s"
+                val=(est,id_sensor)
+                cursorUpdate.execute(sql,val)
+                db.commit()
+                db.close()
+                print(cursorUpdate.rowcount, "record(s) affected")
+                #Exportamos el PIN deseado
+                os.system ('sudo echo %s > /sys/class/gpio/export'%pin_sprintkler)
                 mainpath="/sys/class/gpio/"
-                fullpath= os.path.join(mainpath,"gpio"+pin_fan)
+                fullpath= os.path.join(mainpath,"gpio"+pin_sprintkler)
                 #Establecemos la direccion (salida o entrada)
-                os.system('sudo echo 0 > %s/value'%fullpath)
-                #Liberamos el pin activasdo
-            os.system('sudo echo %s > /sys/class/gpio/unexport'%pin_fan)
+                os.system('sudo echo out > %s/direction'%fullpath)
+                #Activamos la salida del rele dandole un valor de 1 al bit
+                os.system('sudo echo 1 > %s/value'%fullpath)
     except Exception as e:
-        print("ERROR EN:",str(e))
+        print("ERROR EN: login, intento driver.close() - driver.quit",str(e))
         codRes= 'ERROR'
         menRes = str(e)

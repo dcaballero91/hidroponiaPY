@@ -9,6 +9,7 @@ from setrest21 import setrest21
 from setrest03 import setrest03
 from setrest04 import setrest04
 from setrest05 import setrest05
+from setrest06 import setrest06
 app = Flask(__name__) 
 
 ##servicios rest
@@ -19,6 +20,7 @@ app.register_blueprint(setrest21)
 app.register_blueprint(setrest03)
 app.register_blueprint(setrest04)
 app.register_blueprint(setrest05)
+app.register_blueprint(setrest06)
 @app.route('/', methods=['GET'])
 def hello():
     return 'Hello World!'

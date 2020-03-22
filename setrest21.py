@@ -11,7 +11,7 @@ Autor      : Derlis Caballero
 Fecha      : 17/03/2020
 
 Nombre     : setrest20
-Objetivo   : se encarga de devolver temperatura y humedad ambiente
+Objetivo   : se encarga de devolver estados para los rele
 
 Tipo       : Servicio Rest
 
@@ -59,7 +59,13 @@ def accesoSet(fullpath,mod):
     global menRes,codRes,r2
     f = Path(fullpath)
     f.exists()
-    db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
+    try:
+        db=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306',
+                            ssl_ca='/etc/certs/ca.pem',ssl_cert='/etc/certs/client-cert.pem',ssl_key='/etc/certs/client-key2.pem')
+    except Exception as e:
+        print("ERROR EN: connect db web",str(e))
+        codRes= 'ERROR'
+        menRes = str(e)
     try:
         print(fullpath)
         print('seleccion de opcion')

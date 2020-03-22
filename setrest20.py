@@ -60,7 +60,12 @@ def accesoSet(fullpath,mod):
     global menRes,codRes,r2,r3
     f = Path(fullpath)
     f.exists()
-    db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
+    try:
+        db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
+    except Exception as e:
+        print("ERROR EN: connect db local",str(e))
+        codRes= 'ERROR'
+        menRes = str(e)
     try:
         print(fullpath)
         print('seleccion de opcion')

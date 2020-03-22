@@ -56,7 +56,8 @@ def accesoSet(fullpath,mod,ubi):
     f = Path(fullpath)
     f.exists()
     db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
-    db2=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306')
+    db2=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306',
+                                ssl_ca='/etc/certs/ca.pem',ssl_cert='/etc/certs/client-cert.pem',ssl_key='/etc/certs/client-key2.pem')
     try:
         print(fullpath)
         print('seleccion de opcion')

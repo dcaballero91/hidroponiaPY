@@ -59,20 +59,40 @@ def accesoSet(fullpath,mod,ubi):
     sensor = dht.DHT22
 
     # Configuracion del puerto GPIO al cual esta conectado  (GPIO 23)
-    north = 4
-    south = 6 
-    east = 7
-    west = 8
-    db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
-    db2=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306')
+    south = 17 
+    east = 27
+    west = 22
+    try:
+        db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
+    except Exception as e:
+        print("ERROR EN: connect db local",str(e))
+        codRes= 'ERROR'
+        menRes = str(e)
+    try:
+        db2=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306',
+                            ssl_ca='/etc/certs/ca.pem',ssl_cert='/etc/certs/client-cert.pem',ssl_key='/etc/certs/client-key2.pem')
+    except Exception as e:
+        print("ERROR EN: connect db web",str(e))
+        codRes= 'ERROR'
+        menRes = str(e)
     try:
         print(fullpath)
         print('seleccion de opcion')
-        
-		
         if ubi == "north":
                 print ("opcion north")
-                #humidity, temperature = dht.read_retry(sensor, north)
+                cursor=db.cursor() 
+                #Se obtiene pin gpio
+                sql="select gpio from sensor where ubi=%s"
+                nombre=(ubi,)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                north=(y)
+                db.commit()
+                print(north)
+                humidity, temperature = dht.read_retry(sensor, north)
                 cursor=db.cursor() 
                 sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
                 nombre=(mod,ubi)
@@ -85,8 +105,8 @@ def accesoSet(fullpath,mod,ubi):
                 print(z)
                 #Base de datos local
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
-                #val=(temperature,humidity,z)
-                val=('30','30',z)
+                #al=(temperature,humidity,z)
+                val=(temperature,humidity,z)
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
@@ -94,15 +114,27 @@ def accesoSet(fullpath,mod,ubi):
                 #Base de datos Wweb
                 cursor=db2.cursor() 
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
-                #val=(temperature,humidity,z)
-                val=('30','30',z)
+                val=(temperature,humidity,z)
+                val=(temperature,humidity,z)
                 cursor.execute(sql,val)
                 db2.commit()
                 db2.close()
                 print(cursor.rowcount,"insertado correctamente WEB")
         elif ubi == "south":
                 print ("opcion south")
-                #humidity, temperature = dht.read_retry(sensor, south)
+                cursor=db.cursor() 
+                #Se obtiene pin gpio
+                sql="select gpio from sensor where ubi=%s"
+                nombre=(ubi,)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                south=(y)
+                db.commit()
+                print(south)
+                humidity, temperature = dht.read_retry(sensor, south)
                 cursor=db.cursor() 
                 sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
                 nombre=(mod,ubi)
@@ -114,8 +146,8 @@ def accesoSet(fullpath,mod,ubi):
                 z=int(y)
                 print(z)
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
-                #val=(temperature,humidity,z)
-                val=('31','41',z)
+                val=(temperature,humidity,z)
+                val=(temperature,humidity,z)
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
@@ -123,15 +155,27 @@ def accesoSet(fullpath,mod,ubi):
                 #Base de datos Wweb
                 cursor=db2.cursor() 
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                val=(temperature,humidity,z)
                 #val=(temperature,humidity,z)
-                val=('30','30',z)
                 cursor.execute(sql,val)
                 db2.commit()
                 db2.close()
                 print(cursor.rowcount,"insertado correctamente WEB")
         elif ubi == "east":
                 print ("opcion east")
-                #umidity, temperature = dht.read_retry(sensor, east)
+                cursor=db.cursor() 
+                #Se obtiene pin gpio
+                sql="select gpio from sensor where ubi=%s"
+                nombre=(ubi,)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                east=(y)
+                db.commit()
+                print(east)
+                humidity, temperature = dht.read_retry(sensor, east)
                 cursor=db.cursor() 
                 sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
                 nombre=(mod,ubi)
@@ -143,8 +187,8 @@ def accesoSet(fullpath,mod,ubi):
                 z=int(y)
                 print(z)
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
+                val=(temperature,humidity,z)
                 #val=(temperature,humidity,z)
-                val=('32','42',z)
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
@@ -153,14 +197,26 @@ def accesoSet(fullpath,mod,ubi):
                 cursor=db2.cursor() 
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
                 #val=(temperature,humidity,z)
-                val=('30','30',z)
+                val=(temperature,humidity,z)
                 cursor.execute(sql,val)
                 db2.commit()
                 db2.close()
                 print(cursor.rowcount,"insertado correctamente WEB")
         elif ubi == "west":
                 print ("opcion west")
-                #umidity, temperature = dht.read_retry(sensor, west)
+                cursor=db.cursor() 
+                #Se obtiene pin gpio
+                sql="select gpio from sensor where ubi=%s"
+                nombre=(ubi,)
+                cursor.execute(sql,nombre)
+                result=cursor.fetchall()
+                #Se convierte a string el resultado del select para poder insertar 
+                x=(result[0])
+                y = ''.join(map(str,x))
+                west=(y)
+                db.commit()
+                print(west)
+                humidity, temperature = dht.read_retry(sensor, west)
                 cursor=db.cursor() 
                 sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
                 nombre=(mod,ubi)
@@ -173,7 +229,7 @@ def accesoSet(fullpath,mod,ubi):
                 print(z)
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
                 #val=(temperature,humidity,z)
-                val=('33','43',z)
+                val=(temperature,humidity,z)
                 cursor.execute(sql,val)
                 db.commit()
                 db.close()
@@ -182,7 +238,7 @@ def accesoSet(fullpath,mod,ubi):
                 cursor=db2.cursor() 
                 sql="insert into DHT11 (temperatura,humedad,id_sensor) values(%s,%s,%s)"
                 #val=(temperature,humidity,z)
-                val=('30','30',z)
+                val=(temperature,humidity,z)
                 cursor.execute(sql,val)
                 db2.commit()
                 db2.close()
