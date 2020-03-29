@@ -10,21 +10,21 @@ Empresa    : UNIDA PY
 Autor      : Derlis Caballero
 Fecha      : 28/03/2020
 
-Nombre     : setrest22
+Nombre     : setrest23
 Objetivo   : se encarga de devolver estados ph
 
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/setrest22 por apache
-http://192.168.137.107:5000/setrest22 por flask
+http://192.168.137.220/scrapgin/setrest23 por apache
+http://192.168.137.107:5000/setrest23 por flask
 {
-	"mod":"ph"
+	"mod":"uv"
 }
 
 Respeusta de servicio:
     {"ParmOut": {
-   "ph": 395.456
+   "uv": 0.137921
 }}
 """
 from flask import Blueprint, request, jsonify
@@ -33,9 +33,9 @@ from unipath import Path
 """python -m pip install mysql-connector"""
 import mysql.connector
  
-setrest22 = Blueprint('setrest22', __name__)
+setrest23 = Blueprint('setrest23', __name__)
 
-@setrest22.route('/setrest22', methods=['POST'])
+@setrest23.route('/setrest23', methods=['POST'])
 def llamarServicioSet():
     global mod
     ##try:
@@ -43,7 +43,7 @@ def llamarServicioSet():
     inicializarVariables(mod)
     
      
-    salida = {'ph':r2}
+    salida = {'uv':r2}
     return jsonify({'ParmOut':salida})
 
 def inicializarVariables(mod):
@@ -69,10 +69,10 @@ def accesoSet(fullpath,mod):
     try:
         print(fullpath)
         print('seleccion de opcion')
-        if mod == "ph":
-                print ("opcion ph")
+        if mod == "uv":
+                print ("opcion uv")
                 cursor=db.cursor() 
-                sql="select ph from PH order by id_ph desc limit 1"
+                sql="select uv from UV order by id_uv desc limit 1"
                 cursor.execute(sql)
                 result=cursor.fetchall()
                 #Se convierte a string el resultado del select para poder insertar 

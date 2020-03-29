@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Modulos    : PH
-Sub-Modulos: PH
+Modulos    : UV
+Sub-Modulos: UV
 Empresa    : UNIDA PY
 
 Autor      : Derlis Caballero
 Fecha      : 28/03/2020
 
 Nombre     : setrest07
-Objetivo   : se encarga de tomar ph del agua tanque
+Objetivo   : se encarga de tomar uv del agua interior
 
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/setrest07 por apache
-http://192.168.137.220:5000/setrest07 por flask
+http://192.168.137.220/scrapgin/setrest08 por apache
+http://192.168.137.220:5000/setrest08 por flask
 {
-	"mod":"ph",
-    "ubi":"tanque"
+	"mod":"uv",
+    "ubi":"interior"
 }
 """
 from flask import Blueprint, request, jsonify
@@ -28,9 +28,9 @@ from unipath import Path
 import mysql.connector
 import pyfirmata
  
-setrest07 = Blueprint('setrest07', __name__)
+setrest08 = Blueprint('setrest08', __name__)
 
-@setrest07.route('/setrest07', methods=['POST'])
+@setrest08.route('/setrest08', methods=['POST'])
 def llamarServicioSet():
     global mod, ubi
     ##try:
@@ -74,7 +74,7 @@ def accesoSet(fullpath,mod,ubi):
     try:
         print(fullpath)
         print('seleccion de opcion')
-        if ubi == "tanque":
+        if ubi == "interior":
                 print ("opcion tanque")
                 cursor=db.cursor() 
                 #Se obtiene pin gpio
@@ -93,11 +93,10 @@ def accesoSet(fullpath,mod,ubi):
                 iterator = pyfirmata.util.Iterator(board)
                 iterator.start()
                 pin.enable_reporting()
-                
                 if pin.read() == None:
                     pass
                 else:
-                    a=(1023*pin.read())/73.07
+                    a=(pin.read()/1024*5)
                     print("El ph es: ", a);
                     pin.disable_reporting()
                     cursor=db.cursor() 
@@ -112,7 +111,7 @@ def accesoSet(fullpath,mod,ubi):
                     print("Id sensor",z)
                     print("PH", a)
                     #Base de datos local
-                    sql="insert into PH (ph,id_sensor) values(%s,%s)"
+                    sql="insert into UV (uv,id_sensor) values(%s,%s)"
                     val=(a,z)
                     cursor.execute(sql,val)
                     db.commit()
@@ -120,7 +119,7 @@ def accesoSet(fullpath,mod,ubi):
                     print(cursor.rowcount,"insertado correctamente local")
                     #Base de datos Wweb
                     cursor=db2.cursor() 
-                    sql="insert into PH (ph,id_sensor) values(%s,%s)"
+                    sql="insert into UV (uv,id_sensor) values(%s,%s)"
                     val=(a,z)
                     cursor.execute(sql,val)
                     db2.commit()
