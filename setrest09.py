@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Modulos    : UV
-Sub-Modulos: UV
+Modulos    : ACS
+Sub-Modulos: ACS
 Empresa    : UNIDA PY
 
 Autor      : Derlis Caballero
 Fecha      : 28/03/2020
 
-Nombre     : setrest07
-Objetivo   : se encarga de tomar uv del agua interior
+Nombre     : setrest09
+Objetivo   : se encarga de tomar consumo de la llave
 
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/setrest08 por apache
-http://192.168.137.220:5000/setrest08 por flask
+http://192.168.137.220/scrapgin/setrest09 por apache
+http://192.168.137.220:5000/setrest09 por flask
 {
-	"mod":"uv",
-    "ubi":"interior"
+	"mod":"acs",
+    "ubi":"llave"
 }
 """
 from flask import Blueprint, request, jsonify
@@ -28,9 +28,9 @@ from unipath import Path
 import mysql.connector
 import pyfirmata
  
-setrest08 = Blueprint('setrest08', __name__)
+setrest09 = Blueprint('setrest09', __name__)
 
-@setrest08.route('/setrest08', methods=['POST'])
+@setrest09.route('/setrest09', methods=['POST'])
 def llamarServicioSet():
     global mod, ubi
     ##try:
@@ -74,7 +74,7 @@ def accesoSet(fullpath,mod,ubi):
     try:
         print(fullpath)
         print('seleccion de opcion')
-        if ubi == "interior":
+        if ubi == "llave":
                 print ("opcion tanque")
                 cursor=db.cursor() 
                 #Se obtiene pin gpio
@@ -96,8 +96,16 @@ def accesoSet(fullpath,mod,ubi):
                 if pin.read() == None:
                     pass
                 else:
-                    a=(pin.read()/1024*5)
-                    print("El ph es: ", a);
+                    average=0
+                    for i in range(1000):
+            #       print(i)
+            
+                        average=average+((0.0264 * pin.read())-13.51)/1000
+                        """esto es 
+                        para 5Amperes, para sensor de20A o 30A modifica con:
+                        (.19 * analogRead(A0) -25) para 20A 
+                        (.044 * analogRead(A0) -3.78) para  30A """
+                    print("Corriente: " +str(average))
                     pin.disable_reporting()
                     cursor=db.cursor() 
                     sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre= %s and sensor.ubi=%s"
@@ -109,18 +117,18 @@ def accesoSet(fullpath,mod,ubi):
                     y = ''.join(map(str,x))
                     z=int(y)
                     print("Id sensor",z)
-                    print("PH", a)
+                    print("Corriente: ", average)
                     #Base de datos local
-                    sql="insert into UV (uv,id_sensor) values(%s,%s)"
-                    val=(a,z)
+                    sql="insert into ACS (volt,id_sensor) values(%s,%s)"
+                    val=(average,z)
                     cursor.execute(sql,val)
                     db.commit()
                     db.close()
                     print(cursor.rowcount,"insertado correctamente local")
                     #Base de datos Wweb
                     cursor=db2.cursor() 
-                    sql="insert into UV (ph,id_sensor) values(%s,%s)"
-                    val=(a,z)
+                    sql="insert into ACS (volt,id_sensor) values(%s,%s)"
+                    val=(average,z)
                     cursor.execute(sql,val)
                     db2.commit()
                     db2.close()
@@ -133,3 +141,4 @@ def accesoSet(fullpath,mod,ubi):
         print("ERROR EN: login, intento driver.close() - driver.quit",str(e))
         codRes= 'ERROR'
         menRes = str(e)
+
