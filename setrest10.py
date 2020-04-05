@@ -1,8 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Apr  5 15:44:05 2020
+
+@author: root
+"""
+
 import RPi.GPIO as GPIO
 import time,sys, datetime
 import psycopg2
 from psycopg2.extras import execute_values
-import mysql.connector
 
 '''
 Configure raspberry
@@ -21,43 +28,8 @@ total_rotations = 0                                     # This is a counter. It 
 cup_movements = 200                                     # This is how many rotations occur as a cup of liquid passes through.
 rotation_downtime = 5                                   # Sets the cut-off time for establishing a water-flow event.
 last_movement_time = time.time() + rotation_downtime    # This is used to determine if a new water-flow event should be created.
-record_data = False                                     # A flag used to trigger database insert.
-
-
-
-
-print('Control C to exit')
-
-def commit_data(conn):
-    
-
-    '''
-    This passes data to the data base as a single row. It then resets/empties data.
-    '''
-
-    cur = conn.cursor()
-    insert_statement = "INSERT INTO flow ('datetime','movements','cups','gallons') VALUES %s".replace("'",'')
-    execute_values(cur,insert_statement)
-    conn.commit()
-    print ('Data sent.')
-    cur.close()
-    
-
-def prep_and_send(total_rotations):
-    global menRes,codRes
-    try:
-        db=mysql.connector.connect(host='localhost',user='root',passwd='sup3rPw#',database='hidroponia')
-    except Exception as e:
-        print("ERROR EN: connect db local",str(e))
-        codRes= 'ERROR'
-        menRes = str(e)
-    try:
-        db2=mysql.connector.connect(host='5.189.148.10',user='slave',passwd='sup3rPw#',database='hidroponia',port='23306',
-                            ssl_ca='/etc/certs/ca.pem',ssl_cert='/etc/certs/client-cert.pem',ssl_key='/etc/certs/client-key2.pem')
-    except Exception as e:
-        print("ERROR EN: connect db web",str(e))
-        codRes= 'ERROR'
-        menRes = str(e)
+record_data = False 
+def prep_and_send(data,total_rotations):
 
     '''
     Calculates measurements (cups and gallons). Prepares the data into a database-friendly tuple. Appends that tuple to a list. 
@@ -70,48 +42,18 @@ def prep_and_send(total_rotations):
 
     total_cups = total_rotations/cup_movements
     total_gallons = total_cups/16
-    liters = total_gallons * 3.785412
-    
     now = datetime.datetime.now() 
-    print('{}: Movements: {}. \nCups: {}. \nLitros: {}'.format(now,total_rotations,total_cups,liters))
+    print('{}: Movements: {}. \nCups: {}. \nGallons: {}'.format(now,total_rotations,total_cups,total_gallons))
 
-   
-    try:                
-        '''
-        Establish connection with Db and try to insert.
-        '''
-        cursor=db.cursor() 
-        #Se obtiene pin gpio
-        sql="select sensor.id_sensor from sensor inner join station on sensor.id_est = station.id_est where sensor.nombre=%s and sensor.ubi=%s"
-        nombre=('flow','central')
-        cursor.execute(sql,nombre)
-        result=cursor.fetchall()
-        #Se convierte a string el resultado del select para poder insertar 
-        x=(result[0])
-        y = ''.join(map(str,x))
-        s=(y)
-        print(s)
-        sql="insert into flow_meter (movements,cups,litros,id_sensor) values(%s,%s,%s,%s)"
-        val=(total_rotations,total_cups,liters,s)
-        cursor.execute(sql,val)
-        db.commit()
-        db.close()
-        print(cursor.rowcount,"insertado correctamente local")
-        cursor=db2.cursor()
-        sql="insert into flow_meter (movements,cups,litros,id_sensor) values(%s,%s,%s,%s)"
-        val=(total_rotations,total_cups,liters,s)
-        cursor.execute(sql,val)
-        db2.commit()
-        db2.close()
-        print(cursor.rowcount,"insertado correctamente web")
-       
-        
-    except Exception as e:
-        '''In case of error does not reset data to [] (see commit_data).'''
-        e = e + '\n' + e.__traceback__
-        print (e)                      
-    
-
+    current_data = (
+        now,
+        round(total_rotations,2),
+        round(total_cups,2),
+        round(total_gallons,2), 
+        )
+    data.append(current_data)
+                          
+    return data 
 while True:
 
     '''
@@ -138,7 +80,11 @@ while True:
             last_movement_time = time.time() + rotation_downtime
 
     elif record_data == True and time.time() > last_movement_time: #if it's been x seconds since last change
-        prep_and_send(total_rotations)
+        total_cups = total_rotations/cup_movements
+        total_gallons = total_cups/16
+        now = datetime.datetime.now() 
+        print('{}: Movements: {}. \nCups: {}. \nGallons: {}'.format(now,total_rotations,total_cups,total_gallons))
+        #data = prep_and_send(data,total_rotations)
         record_data = False
         total_rotations = 0
         last_movement_time = time.time() + rotation_downtime
