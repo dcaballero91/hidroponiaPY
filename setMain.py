@@ -2,7 +2,7 @@
 # -*- Coding: utf-8 -*-
 
 from flask import Flask, jsonify, request
-from setrest01 import setrest01
+from ds18b20 import ds18b20
 from setrest02 import setrest02
 from setrest03 import setrest03
 from setrest04 import setrest04
@@ -19,7 +19,7 @@ from setrest24 import setrest24
 app = Flask(__name__) 
 
 ##servicios rest
-app.register_blueprint(setrest01)
+app.register_blueprint(ds18b20)
 app.register_blueprint(setrest02)
 app.register_blueprint(setrest03)
 app.register_blueprint(setrest04)

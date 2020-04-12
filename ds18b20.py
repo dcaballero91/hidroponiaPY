@@ -8,14 +8,14 @@ Empresa    : UNIDA PY
 Autor      : Derlis Caballero
 Fecha      : 12/03/2020
 
-Nombre     : setrest01
+Nombre     : ds18b20
 Objetivo   : se encarga de tomcar tempratura del agua tanque
 
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/setrest01 por apache
-http://192.168.137.220:500/setrest01 por flask
+http://192.168.137.220/scrapgin/ds18b20 por apache
+http://192.168.137.220:500/ds18b20 por flask
 {
 	"mod":"DS18B20",
     "ubi":"tanque"
@@ -54,9 +54,9 @@ def read_temp(fol):
         temp_c = float(temp_string) / 1000.0
         #temp_f = temp_c * 9.0 / 5.0 + 32.0
         return temp_c
-setrest01 = Blueprint('setrest01', __name__)
+ds18b20 = Blueprint('ds18b20', __name__)
 
-@setrest01.route('/setrest01', methods=['POST'])
+@ds18b20.route('/ds18b20', methods=['POST'])
 
 def llamarServicioSet():
     
