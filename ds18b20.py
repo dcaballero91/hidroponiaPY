@@ -9,13 +9,13 @@ Autor      : Derlis Caballero
 Fecha      : 12/03/2020
 
 Nombre     : ds18b20
-Objetivo   : se encarga de tomcar tempratura del agua tanque
+Objetivo   : se encarga de tomcar tempratura del agua
 
 Tipo       : Servicio Rest
 
 Ej. llamada:
-http://192.168.137.220/scrapgin/ds18b20 por apache
-http://192.168.137.220:500/ds18b20 por flask
+http://192.168.137.220/scraping/ds18b20 por apache
+http://192.168.137.220:5000/ds18b20 por flask
 {
 	"mod":"DS18B20",
     "ubi":"tanque"

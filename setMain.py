@@ -3,6 +3,7 @@
 
 from flask import Flask, jsonify, request
 from ds18b20 import ds18b20
+from ds18b20cons import ds18b20cons
 from setrest02 import setrest02
 from setrest03 import setrest03
 from setrest04 import setrest04
@@ -20,6 +21,7 @@ app = Flask(__name__)
 
 ##servicios rest
 app.register_blueprint(ds18b20)
+app.register_blueprint(ds18b20cons)
 app.register_blueprint(setrest02)
 app.register_blueprint(setrest03)
 app.register_blueprint(setrest04)
